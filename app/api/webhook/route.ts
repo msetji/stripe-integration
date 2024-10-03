@@ -1,45 +1,21 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/utils/stripe';
 import { supabaseAdmin } from '@/utils/supabaseServer';
-import { buffer } from 'micro'; // Import buffer from micro
 import Stripe from 'stripe';
 
-// Disable body parsing for this route
-export const config = {
-  api: {
-    bodyParser: false, // Disable body parsing for Stripe's raw body
-  },
-};
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
+export async function POST(request: NextRequest) {
     try {
-      // Capture the raw body using buffer
-      const rawBody = await buffer(req);
-      console.log('Stripe webhook received:', rawBody.toString());
-      const signature = req.headers['stripe-signature'];
-
-      if (!signature) {
-        console.error('Stripe signature missing');
-        return res.status(400).send('Stripe signature missing');
-      }
-
+      const rawBody = await request.text();
+      const signature = request.headers.get('stripe-signature');
+  
       let event;
       try {
-        // Verify the webhook signature using the raw body
-        event = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET!);
-      } catch (err) {
-        // Use Error casting to access message and log raw payload for debugging
-        const errorMessage = (err as Error).message;
-        console.error(`Webhook signature verification failed: ${rawBody.toString()}`);
-
-        // Return error message and the raw payload for debugging
-        return res.status(400).json({
-          message: `Webhook signature verification failed: ${rawBody.toString()}`,
-          rawPayload: rawBody.toString(), // Include raw payload in the response
-        });
+        event = stripe.webhooks.constructEvent(rawBody, signature!, process.env.STRIPE_WEBHOOK_SECRET!);
+      } catch (error: any) {
+        console.error(`Webhook signature verification failed: ${error.message}`);
+        return NextResponse.json({ statusCode: 400, message: 'Webhook Error' }, { status: 400 });
       }
-
+  
       // Handle the checkout.session.completed event
       if (event.type === 'checkout.session.completed') {
         const session: Stripe.Checkout.Session = event.data.object;
@@ -48,59 +24,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Create or update the stripe_customer_id in the stripe_customers table
         const { error } = await supabaseAdmin
-          .from('stripe_customers')
-          .upsert({
-            user_id: userId,
-            stripe_customer_id: session.customer,
-            subscription_id: session.subscription,
-            plan_active: true,
-            plan_expires: null,
-          });
+        .from('stripe_customers')
+        .upsert({ user_id: userId, stripe_customer_id: session.customer, subscription_id: session.subscription, plan_active: true, plan_expires: null })
 
-        if (error) {
-          console.error('Error upserting customer:', error.message);
-          return res.status(500).json({ message: 'Database Error' });
-        }
+
       }
-
+  
       if (event.type === 'customer.subscription.updated') {
         const subscription: Stripe.Subscription = event.data.object;
         console.log(subscription);
-
-        // Update the plan_expires field in the stripe_customers table
+          // Update the plan_expires field in the stripe_customers table
         const { error } = await supabaseAdmin
           .from('stripe_customers')
           .update({ plan_expires: subscription.cancel_at })
           .eq('subscription_id', subscription.id);
-
-        if (error) {
-          console.error('Error updating subscription:', error.message);
-          return res.status(500).json({ message: 'Database Error' });
-        }
       }
-
+  
       if (event.type === 'customer.subscription.deleted') {
         const subscription = event.data.object;
         console.log(subscription);
 
         const { error } = await supabaseAdmin
-          .from('stripe_customers')
-          .update({ plan_active: false, subscription_id: null })
-          .eq('subscription_id', subscription.id);
-
-        if (error) {
-          console.error('Error updating subscription deletion:', error.message);
-          return res.status(500).json({ message: 'Database Error' });
-        }
+        .from('stripe_customers')
+        .update({ plan_active: false, subscription_id: null })
+        .eq('subscription_id', subscription.id);
       }
-
-      return res.status(200).json({ received: true });
-    } catch (err: any) {
-      console.error('Webhook processing error:', err.message);
-      return res.status(500).json({ message: err.message });
+  
+      return NextResponse.json({ statusCode: 200, message: 'success' });
+    } catch (error: any) {
+      return NextResponse.json({ message: error.message }, { status: 500 });
     }
-  } else {
-    res.setHeader('Allow', 'POST');
-    res.status(405).end('Method Not Allowed');
   }
-}
