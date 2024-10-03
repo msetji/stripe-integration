@@ -31,12 +31,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } catch (err) {
         // Use Error casting to access message and log raw payload for debugging
         const errorMessage = (err as Error).message;
-        console.error(`Webhook signature verification failed: ${errorMessage}`);
-        console.error(`Raw payload: ${rawBody.toString()}`); // Log raw body payload
+        console.error(`Webhook signature verification failed: ${rawBody.toString()}`);
 
         // Return error message and the raw payload for debugging
         return res.status(400).json({
-          message: `Webhook signature verification failed: ${errorMessage}`,
+          message: `Webhook signature verification failed: ${rawBody.toString()}`,
           rawPayload: rawBody.toString(), // Include raw payload in the response
         });
       }
