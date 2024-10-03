@@ -16,6 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       // Capture the raw body using buffer
       const rawBody = await buffer(req);
+      console.log('Stripe webhook received:', rawBody.toString());
       const signature = req.headers['stripe-signature'];
 
       if (!signature) {
