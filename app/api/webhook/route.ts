@@ -26,11 +26,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       let event;
       try {
+        // Verify the webhook signature using the raw body
         event = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET!);
       } catch (err) {
-        const errorMessage = (err as Error).message; // Explicitly cast err to Error
-        console.error(`Webhook signature verification failed: ${errorMessage} ${rawBody.toString()}`);
-        return res.status(400).send(`Webhook signature verification failed: ${errorMessage}`);
+        // Use Error casting to access message and log raw payload for debugging
+        const errorMessage = (err as Error).message;
+        console.error(`Webhook signature verification failed: ${errorMessage}`);
+        console.error(`Raw payload: ${rawBody.toString()}`); // Log raw body payload
+
+        // Return error message and the raw payload for debugging
+        return res.status(400).json({
+          message: `Webhook signature verification failed: ${errorMessage}`,
+          rawPayload: rawBody.toString(), // Include raw payload in the response
+        });
       }
 
       // Handle the checkout.session.completed event
