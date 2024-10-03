@@ -32,7 +32,7 @@ const Navbar = () => {
     <div className="navbar bg-base-100">
       <div className="flex-1">
         <Link href="/" className="btn btn-ghost text-xl">
-          Stripe Integration with Supabase
+          🔥 Stripe for SaaS
         </Link>
       </div>
       <div className="flex-none">

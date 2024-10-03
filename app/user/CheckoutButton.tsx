@@ -13,7 +13,7 @@ export default function CheckoutButton() {
       toast.error("Please log in to create a new Stripe Checkout session");
       return;
     }
-    console.log("KEY: ", process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
     const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
     const stripe = await stripePromise;
     const response = await fetch('/api/checkout', {
@@ -21,7 +21,7 @@ export default function CheckoutButton() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ priceId: 'price_1OtHkdBF7AptWZlcIjbBpS8r', userId: data.user?.id, email: data.user?.email }),
+        body: JSON.stringify({ priceId: 'price_1Q2ndY04yIg5yrRnF5AAtVvF', userId: data.user?.id, email: data.user?.email }),
       });
     const session = await response.json();
     await stripe?.redirectToCheckout({ sessionId: session.id });

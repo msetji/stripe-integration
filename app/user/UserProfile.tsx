@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../utils/supabaseClient";
 import { User } from "@supabase/supabase-js";
 import LoginForm from "./LoginForm";
+import PortalButton from "../portal/PortalButton";
 
 export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null);
@@ -23,7 +24,7 @@ export default function UserProfile() {
           .single();
 
         if (error) {
-          console.log("No stripe customer data found",);
+          console.log("No stripe customer data found",error);
         } else {
           setStripeCustomer(stripeCustomerData);
         }
@@ -79,6 +80,7 @@ export default function UserProfile() {
                 <code>{JSON.stringify(stripeCustomer, null, 2)}</code>
               </pre>
             </div>
+            <PortalButton />
             </>
           ) : (
             <div>

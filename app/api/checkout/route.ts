@@ -16,11 +16,6 @@ export async function POST(request: Request) {
                     // base subscription
                     price: priceId,
                 },
-                {
-                    // one-time setup fee
-                    price: 'price_1Q2ndY04yIg5yrRnF5AAtVvF',
-                    quantity: 1,
-                },
             ],
             mode: 'subscription',
             success_url: `${request.headers.get('origin')}/success`,
