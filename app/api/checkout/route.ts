@@ -18,8 +18,8 @@ export async function POST(request: Request) {
                 },
             ],
             mode: 'subscription',
-            success_url: `${request.headers.get('origin')}/success`,
-            cancel_url: `${request.headers.get('origin')}/cancel`,
+            success_url: `${request.headers.get('origin')}/user`,
+            cancel_url: `${request.headers.get('origin')}/user`,
         });
 
         return NextResponse.json({ id: session.id });

@@ -5,7 +5,7 @@ export default function Home() {
     <main className="p-8 font-sans">
       <h1 className="text-3xl font-bold mb-4">Full-Stack Stripe API Implementation</h1>
       <p className="mb-4">
-        This project is a full-stack application built using Node.js, Next.js, React, and TypeScript. It integrates Stripe APIs for both subscription and usage-based billing, and leverages Supabase for authentication and as a database solution. Users must create an account before subscribing, with all user data securely handled via Supabase authentication.
+        This project is a full-stack application built using Node.js, Next.js, React, and TypeScript. It integrates Stripe APIs for both subscription and usage-based billing, and leverages Supabase for authentication and as a database solution. Users must create an account before subscribing, with all user data securely handled via Supabase authentication. All photos on the app are taken and edited by Michael Setji.
       </p>
       <h2 className="text-2xl font-semibold mb-2">Features:</h2>
       <ul className="list-disc list-inside mb-4">

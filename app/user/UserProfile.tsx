@@ -5,6 +5,7 @@ import { supabase } from "../../utils/supabaseClient";
 import { User } from "@supabase/supabase-js";
 import LoginForm from "./LoginForm";
 import PortalButton from "../portal/PortalButton";
+import CheckoutButton from "./CheckoutButton";
 
 export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null);
@@ -87,6 +88,7 @@ export default function UserProfile() {
               <p className="text-yellow-500">
                 Stripe customer data not created yet. Buy a plan!
               </p>
+              <CheckoutButton />
             </div>
           )}
 

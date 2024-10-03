@@ -5,7 +5,6 @@ export default function Login() {
   return (
     <>
       <UserProfile />
-      <CheckoutButton/>
     </>
   );
 }
