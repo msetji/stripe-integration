@@ -30,8 +30,12 @@ export default function LoginForm() {
     <button
       onClick={handleSignUp}
       disabled={loading}
+      className={`px-4 py-2 text-white font-semibold rounded ${
+        loading ? "bg-blue-300" : "bg-blue-500 hover:bg-blue-600"
+      }`}
     >
       {loading ? "Signing up..." : "Sign up with random email and password"}
     </button>
   );
+
 }

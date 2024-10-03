@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 
     const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
     if (!user || userError) {
-      throw 'supabase auth error';
+      throw 'Must make an account first! Navigate to User page.';
     }
 
     // Check the user's active_plan status in the stripe_customers table

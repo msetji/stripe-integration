@@ -49,7 +49,7 @@ const Navbar = () => {
           </li>
           <li>
             <Link href="/user" className="btn">
-              User Auth
+              User
             </Link>
           </li>
         </ul>
