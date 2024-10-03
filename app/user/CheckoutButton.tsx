@@ -31,6 +31,7 @@ export default function CheckoutButton() {
     <div>
       <h1>Signup for a Plan</h1>
       <p>Clicking this button creates a new Stripe Checkout session</p>
+      <p>PLEASE READ: Use 4242 4242 4242 4242 for the credit card number, along with any random information.</p>
       <button className="btn btn-accent" onClick={handleCheckout}>Buy Now</button>
     </div>
   );
